@@ -6,28 +6,46 @@
 
 async function populateRoomSelect() {
   const select = document.getElementById("room-select");
+  const rooms = await getRooms();
 
-  // TODO:
-  // 1. Call getRooms() from api.js
-  // 2. For each room, create an <option value="ROOM_ID">ROOM_NAME</option>
-  // 3. Append the options to `select`
+  for (const room of rooms) {
+    const option = document.createElement("option");
+    option.value = room.id;
+    option.textContent = `${room.name} (Capacity: ${room.capacity})`;
+    select.appendChild(option);
+  }
+
 }
 
-function handleBookingSubmit(event) {
+async function handleBookingSubmit(event) {
   event.preventDefault();
 
   const statusEl = document.getElementById("form-status");
+  statusEl.classList.remove("success", "error");
 
-  // TODO:
-  // 1. Read the form values (roomId, clubName, date, startTime, endTime, purpose)
-  //    Hint: use document.getElementById(...).value for each field
-  // 2. Build a bookingData object matching the shape described in api.js
-  // 3. Call createBooking(bookingData) from api.js
-  // 4. On success, show a message in statusEl (add class "success")
-  //    and consider resetting the form with event.target.reset()
-  // 5. On failure, show an error message in statusEl (add class "error")
 
-  statusEl.textContent = "TODO: implement handleBookingSubmit()";
+
+  const bookingData = {
+    roomId: document.getElementById("room-select").value,
+    clubName: document.getElementById("club-name").value.trim(),
+    date: document.getElementById("date").value,
+    startTime: document.getElementById("start-time").value,
+    endTime: document.getElementById("end-time").value,
+    purpose: document.getElementById("purpose").value.trim(),
+  };
+
+  try {
+    const created = await createBooking(bookingData);
+    console.log("Created booking:", created)
+
+    statusEl.textContent = "Booking created!";
+    statusEl.classList.add("success");
+    event.target.reset();
+  } catch (err) {
+    console.error("Failed to create booking:", err);
+    statusEl.textContent = "Could not create booking. Please try again.";
+    statusEl.classList.add("error");
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -37,44 +37,33 @@ let MOCK_BOOKINGS = [];
 // ---------- Rooms ----------
 
 async function getRooms() {
-  // STAGE 1 (current):
-  return MOCK_ROOMS;
-
-  // STAGE 3: replace the line above with:
-  // const response = await fetch("/api/rooms");
-  // return await response.json();
+  const response = await fetch("/api/rooms");
+  return await response.json();
 }
 
 async function getRoomById(id) {
-  // STAGE 1 (current):
-  return MOCK_ROOMS.find((room) => room.id === id);
-
-  // STAGE 3: replace the two lines above with:
-  // const response = await fetch(`/api/rooms/${id}`);
-  // return await response.json();
+  const response = await fetch(`/api/rooms/${id}`);
+  return await response.json();
 }
 
 // ---------- Bookings ----------
 
 async function getBookings() {
-  // TODO (Stage 1): return MOCK_BOOKINGS
-  // TODO (Stage 3): fetch("/api/bookings") and return the parsed JSON
+  const response = await fetch("/api/bookings");
+  return await response.json();
 }
 
 async function createBooking(bookingData) {
-  // bookingData looks like:
-  // { roomId, clubName, date, startTime, endTime, purpose }
-
-  // TODO (Stage 1): push a new object (with a generated id) into
-  //   MOCK_BOOKINGS and return it.
-  // TODO (Stage 3): fetch("/api/bookings", {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify(bookingData),
-  // }) and return the parsed JSON.
+  const response = await fetch("/api/bookings", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(bookingData),
+  });
+  return await response.json()
 }
 
 async function deleteBooking(id) {
-  // TODO (Stage 1): remove the matching booking from MOCK_BOOKINGS.
-  // TODO (Stage 3): fetch(`/api/bookings/${id}`, { method: "DELETE" }).
+  await fetch(`/api/bookings/${id}`, {
+    method: "DELETE",
+  });
 }

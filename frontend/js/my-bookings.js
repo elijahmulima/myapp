@@ -5,24 +5,45 @@
 
 async function renderBookings() {
   const container = document.getElementById("bookings-list");
+  const bookings = await getBookings();
 
-  // TODO:
-  // 1. Call getBookings() from api.js
-  // 2. If there are no bookings, show a friendly message
-  // 3. Otherwise, build one .booking-item div per booking, each with:
-  //    - room name / id, club name, date, start-end time, purpose
-  //    - a "Cancel" button with a data-id attribute set to the booking id
-  // 4. Set container.innerHTML to the joined HTML
-  // 5. Attach click listeners to each "Cancel" button that call
-  //    handleCancelClick(bookingId)
+  if (!bookings || bookings.length === 0) {
+    container.innerHTML = "<p>No bookings yet.</p>";
+    return;
+  }
 
-  container.innerHTML = "<p>TODO: implement renderBookings()</p>";
+  const cards = await Promise.all(
+    bookings.map(async (booking) => {
+      const room = await getRoomById(booking.roomId);
+      const roomLabel = room ? `${room.name} (${booking.roomId})` : booking.roomId;
+
+      return `
+        <div class="booking-item">
+          <h3>${roomLabel}</h3>
+          <p><strong>Club:</strong> ${booking.clubName}</p>
+          <p><strong>Date:</strong> ${booking.date}</p>
+          <p><strong>Time:</strong> ${booking.startTime} - ${booking.endTime}</p>
+          <p><strong>Purpose:</strong> ${booking.purpose}</p>
+          <button type="button" class="cancel-btn" data-id="${booking.id}">Cancel</button>
+        </div>
+      `;
+    })
+  );
+
+  container.innerHTML = cards.join("")
+
+  const cancelButtons = container.querySelectorAll(".cancel-btn");
+  cancelButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      handleCancelClick(button.dataset.id);
+    });
+  });
+
 }
 
 async function handleCancelClick(bookingId) {
-  // TODO:
-  // 1. Call deleteBooking(bookingId) from api.js
-  // 2. Re-render the bookings list (call renderBookings() again)
+  await deleteBooking(bookingId)
+  await renderBookings();
 }
 
 document.addEventListener("DOMContentLoaded", renderBookings);
